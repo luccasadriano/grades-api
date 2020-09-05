@@ -31,13 +31,13 @@ const findAll = async (req, res) => {
   const {id, name} = req.query
 
   //condicao para o filtro no findAll
-  var condition = name
-    ? { name: { $regex: new RegExp(name), $options: 'i' } }
-    : {}
+  // var condition = name
+  //   ? { name: { $regex: new RegExp(name), $options: 'i' } }
+  //   : {}
 
   try {
 
-    const data = await Student.find(condition)
+    const data = await Student.find()
 
     if(!data){
       res.status(404).send(`Dados não encontrado ${id}`)

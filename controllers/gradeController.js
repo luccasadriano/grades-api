@@ -28,7 +28,7 @@ const create = async (req, res) => {
 }
 
 const findAll = async (req, res) => {
-  const {id, name} = req.query
+  const { id, name } = req.query
 
   //condicao para o filtro no findAll
   // var condition = name
@@ -39,8 +39,8 @@ const findAll = async (req, res) => {
 
     const data = await Student.find()
 
-    if(!data){
-      res.status(404).send(`Dados não encontrado ${id}`)
+    if (!data) {
+      res.status(400).send({ message: `Id: ${id}, não encontrado ` })
     }
 
     res.send(data)
@@ -59,16 +59,16 @@ const findOne = async (req, res) => {
 
   try {
 
-    const data = await Student.findOne({_id: id})
+    const data = await Student.findOne({ _id: id })
 
-    if(!data){
-      res.status(404).send(`Id: ${id}, não encontrado `)
+    if (!data) {
+      res.status(400).send({ message: `Id: ${id}, não encontrado ` })
     }
     res.send(data)
 
     logger.info(`GET /grade - ${id}`)
   } catch (error) {
-    res.status(500).send({ message: 'Erro ao buscar o Grade id: ' + id })
+    res.status(500).send({ message: 'Erro ao buscar a Grade id: ' + id })
     logger.error(`GET /grade - ${JSON.stringify(error.message)}`)
   }
 }
@@ -84,9 +84,13 @@ const update = async (req, res) => {
 
   try {
 
-    const data = await Student.findByIdAndUpdate({_id: id}, req.body)
+    const data = await Student.findByIdAndUpdate({ _id: id }, req.body)
 
-    const retorn = await Student.findOne({_id: id})
+    if (!data) {
+      res.status(400).send({ message: `Id: ${id}, não encontrado ` })
+    }
+
+    const retorn = await Student.findOne({ _id: id })
 
     res.send(retorn)
 
@@ -102,7 +106,11 @@ const remove = async (req, res) => {
 
   try {
 
-    const data = await Student.findByIdAndDelete({_id: id})
+    const data = await Student.findByIdAndDelete({ _id: id })
+
+    if (!data) {
+      res.status(400).send({ message: `Id: ${id}, não encontrado ` })
+    }
 
     res.send(data)
 
@@ -116,7 +124,12 @@ const remove = async (req, res) => {
 }
 
 const removeAll = async (req, res) => {
+
   try {
+
+    const data = await Student.deleteMany()
+
+    res.status(200).send(data)
     logger.info(`DELETE /grade`)
   } catch (error) {
     res.status(500).send({ message: 'Erro ao excluir todos as Grades' })
